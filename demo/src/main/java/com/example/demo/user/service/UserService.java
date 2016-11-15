@@ -15,11 +15,14 @@ public class UserService {
 	private UserRepository userRepository;
 
 	@Transactional
-	public void save(){
+	public void save(Boolean flag){
 		User user = new User();
 		user.setName("aaa");
 		user.setPassword("bbbb");
 		userRepository.save(user);
+		if(flag){
+			throw new RuntimeException();
+		}
 	}
 	
 }

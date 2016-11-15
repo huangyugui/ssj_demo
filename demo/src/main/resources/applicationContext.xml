@@ -99,33 +99,34 @@
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
-	<!-- JPA事务配置 -->
+	<!-- JPA事务配置
 	<tx:annotation-driven transaction-manager="transactionManager" />
- 	
-	<!-- Hibernate事务配置
+ 	 -->
+ 	 
+	<!-- Hibernate事务配置-->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-		-->
+		
 			<!-- 指定当前方法以非事务方式执行操作，如果当前存在事务，就把当前事务挂起，等我以非事务的状态运行完，再继续原来的事务。 查询定义即可 
-				read-only="true" 表示只读 
+				read-only="true" 表示只读 -->
 			<tx:method name="count*" propagation="NOT_SUPPORTED"  read-only="true"/>
 			<tx:method name="query*" propagation="NOT_SUPPORTED"  read-only="true"/>
 			<tx:method name="get*" propagation="NOT_SUPPORTED"  read-only="true"/>
 			<tx:method name="load*" propagation="NOT_SUPPORTED"  read-only="true"/>
 			<tx:method name="find*" propagation="NOT_SUPPORTED"  read-only="true"/>
-			-->
+			
 			<!-- 事务执行方式 REQUIRED：指定当前方法必需在事务环境中运行， 如果当前有事务环境就加入当前正在执行的事务环境， 如果当前没有事务，就新建一个事务。 
-				这是默认值。
+				这是默认值。 -->
 			<tx:method name="*" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
-	 -->
-	<!-- 定义切面，在 * com.example.demo..*Service*.*(..) 中执行有关的hibernate session的事务操作
+	
+	<!-- 定义切面，在 * com.example.demo..*Service*.*(..) 中执行有关的hibernate session的事务操作 -->
 	<aop:config expose-proxy="true">
 		<aop:pointcut id="serviceOperation" expression="execution(* com.example.demo..*Service*.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
 	</aop:config>
-	 -->
+	
 
 	<import resource="classpath:applicationContext-profile.xml" />
 	
