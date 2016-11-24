@@ -1,0 +1,95 @@
+html,
+body {margin: 0; padding: 0; width: 100%; height: 100%;}
+
+body {
+	background: url(../images/login-bg.jpg) center no-repeat #1d2a51; background-size: cover;
+	 font-size: 100%; font-family: "microsoft yahei";
+}
+
+
+.login-form,
+.login  {
+	-webkit-transition:all 0.3s ease-out;
+	-khtml-transition:all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
+}
+
+.login-row {margin-bottom: 20px; overflow: hidden;}
+	.login-row:after {
+		content: "."; 
+	    display: block;
+	    height: 0; 
+	    clear: both; 
+	    visibility: hidden;
+	}
+.login .fl {float: left;}
+.login .fr {float: right;}
+.login .tc {text-align: center;}
+.login {
+	position: absolute; top: 50%; left: 50%; width: 680px;
+	margin: -260px 0 0 -340px; padding: 190px 0 0;	
+	background: url(../images/login-bg-head.jpg) center top no-repeat #2b82df;
+}
+	.login-logo {
+		position: absolute; top: 14px; left: 20px; width: 84px; height: 24px;
+		background: url(../images/logo-white-81x21.png) no-repeat;
+	}
+	.login-form {
+		padding: 36px 130px 30px; background: #FFFFFF;
+	}
+	.login-name,
+	.login-password,
+	.login-tip {background: url(../images/login-group.png) no-repeat !important;}
+	
+	.login-name,
+	.login-password,
+	.login-checkinput {
+		width:100%; box-sizing: border-box; _width:418px; +width:418px;
+		border: 1px solid #707070; 
+		height: 36px !important; line-height: 36px !important;  color: #666666; font-size: 14px;
+		padding: 0 14px 0 34px;
+		outline: none;
+	}
+		.login-name:focus,
+		.login-password:focus,
+		.login-checkinput:focus {border-color: #004e9d; color: #004e9d;}
+		
+		.login-name {background-position: 4px 2px !important; margin-bottom: 20px;}
+		.login-password {background-position: 4px -92px !important; margin-bottom: 20px;}
+		
+		.login-name:focus {background-position: 4px -42px;}
+		.login-password:focus {background-position: 4px -136px;}
+		
+		.login-checkinput {width: 136px; padding: 0 10px; text-align: center;}
+		.login-checkcord {width: 100px; height: 36px; text-align: center; overflow: hidden;  cursor: pointer;}
+		.login-checkcord img {border: none;}
+		.login-changecord {height: 36px; width: 60px; color: #999; line-height: 1.2em; text-align: right; font-size: 12px; cursor: pointer;}
+			.login-changecord:hover {color: #004E9D;}
+		.login-forgetpass {font-size: 12px; color:#004E9D; cursor: pointer;}
+		.login-keep {width: 20px; height: 20px; cursor: pointer;}
+		
+		.login-tip {
+			height: 30px; line-height: 30px; background-position: 4px -224px; background-color: #fff2f2;
+			padding-left: 34px; font-size: 12px; color: #004e9d; border: 1px solid #e0b1b8; margin-bottom: 20px;
+		}
+		
+		.login-btn {
+			margin: 0 auto; border: none; border-radius: 5px;
+			width: 226px; height: 40px; line-height: 40px; text-align: center;  outline: none;
+			background: #004E9D; font-size: 14px; color: #FFF; letter-spacing: 0.1em; cursor: pointer;
+		}
+			.login-btn:active {background: #01366c; color: #DDD;}
+			
+		/* 控制显示处理 */
+		.hidden {display: none;}
+		.login-large {margin-top: -290px;}
+		.login-large .login-form {margin-top: -30px;}
+		/*
+		.login-large .hidden {display: block;}
+		*/
+		
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0px 1000px white inset;
+}

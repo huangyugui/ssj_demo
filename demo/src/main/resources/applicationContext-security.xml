@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security" 
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd  
+                        http://www.springframework.org/schema/security 
+                        http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 该路径下的资源不用过滤 -->
+	<http pattern="/**/*.js" security="none" />
+	<http pattern="/**/*.css" security="none" />
+	<http pattern="/**/*.jpg" security="none" />
+	<http pattern="/**/*.jpeg" security="none" />
+	<http pattern="/**/*.ico" security="none" />
+	<http pattern="/**/*.gif" security="none" />
+	<http pattern="/**/*.png" security="none" />
+	<http pattern="/**/*.pdf" security="none" />
+	<http pattern="/fonts/*.*" security="none" />
+	<http pattern="/*.jsp" security="none" />
+	<http pattern="/*.html*" security="none" />
+	<http pattern="/**/*NoFilter*" security="none" />
+	<http pattern="/**/*druid*" security="none" />
+	<http pattern="/login/getImage" security="none" />
+	<http pattern="/login/page4login" security="none" />
+	
+	<!-- 页面标签权限功能依赖 -->
+	<beans:bean id="customWebInvocationPrivilegeEvaluator" class="org.springframework.security.web.access.DefaultWebInvocationPrivilegeEvaluator">
+		<beans:constructor-arg name="securityInterceptor" ref="myFilter" />
+	</beans:bean>
+	
+	<!-- 自定义资源,权限 -->
+	<beans:bean id="myFilter" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<beans:property name="accessDecisionManager" ref="myAccessDecisionManager" /><!-- 资源访问决策 -->
+		<beans:property name="authenticationManager" ref="authenticationManager" /><!-- 登陆的认证 -->
+		<beans:property name="securityMetadataSource" ref="mySecurityMetadataSourceService" /><!-- 资源和权限列表 -->
+	</beans:bean>
+	
+	<!-- 访问决策器，决定某个用户具有的角色，是否有足够的权限去访问某个资源 -->
+	<beans:bean id="myAccessDecisionManager" class="org.springframework.security.access.vote.ConsensusBased">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+	
+	<!-- 认证管理器，实现用户认证的入口，主要实现UserDetailsService接口即可 -->
+	<!-- 每个 authentication-provider 会创建一个 DaoAuthenticationProvider
+		每个 authentication-manager 会创建一个 ProviderManager, 并把 authentication-provider 注册到他里面去 -->
+	<authentication-manager alias="authenticationManager">
+		<!-- 判断用户名、密码，查找登录人权限 -->
+		<authentication-provider user-service-ref="userDetailsService">
+			<!-- 如果用户的密码采用加密的话，可以加点“盐” -->
+			<password-encoder hash="md5">
+				<salt-source user-property="username" />
+			</password-encoder>
+		</authentication-provider>
+		<!-- 微信认证 -->
+		<authentication-provider ref="wxPreAuthAuthProvider" />
+		<authentication-provider ref="rememberMeAuthenticationProvider" />
+	</authentication-manager>
+	
+	<!-- 自定义UserDetailsService认证 -->
+	<beans:bean id="userDetailsService" class="com.example.demo.base.security.MyUserDetailServiceImpl"/>
+	
+	<beans:bean id="wxPreAuthAuthProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+	    <beans:property name="preAuthenticatedUserDetailsService">
+	        <beans:bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+	            <beans:property name="userDetailsService" ref="userDetailsService" />
+	        </beans:bean>
+	    </beans:property>
+	</beans:bean>
+	
+	
+	<!-- 自定义资源权限关系集合 -->
+	<beans:bean id="mySecurityMetadataSourceService" class="com.example.demo.base.security.MySecurityMetadataSourceService">
+		<!-- <beans:property name="jobAuthService" ref="jobAuthService" /> -->
+	</beans:bean>
+
+	<http entry-point-ref="myAuthenticationEntryPoint">
+		<access-denied-handler error-page="/jsp/403.jsp"/>
+		<csrf disabled="true" />
+		<anonymous enabled="true" granted-authority="ROLE_ANONYMOUS" key="foobar" username="游客"/>
+		<logout logout-url="/j_spring_security_logout" logout-success-url="/login/page4login" invalidate-session="true" delete-cookies="JSESSIONID"/>
+		<session-management invalid-session-url="/login/page4login" >
+			<concurrency-control max-sessions="1" error-if-maximum-exceeded="false"/>
+		</session-management>
+		<headers>
+			<frame-options policy="SAMEORIGIN" />
+		</headers>
+		<!-- 
+		<remember-me remember-me-parameter="remember-me" token-validity-seconds="1209600" 
+			data-source-ref="dataSource" user-service-ref="userDetailsService"/>
+		 -->
+		<!-- 微信认证Filter -->
+		<custom-filter ref="wxPreAuthFilter" position="PRE_AUTH_FILTER" />
+		<custom-filter ref="myLoginFilter" position="FORM_LOGIN_FILTER" />
+		<custom-filter ref="myFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+		<custom-filter ref="rememberMeFilter" before="REMEMBER_ME_FILTER" />
+	</http>
+	
+	<!-- 登录入口 -->
+	<beans:bean id="myAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:constructor-arg value="/login/page4login" />
+	</beans:bean>
+	
+	<!-- 微信认证 -->
+	<beans:bean id="wxPreAuthFilter" class="com.example.demo.base.security.WxPreAuthenticatedProcessingFilter">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+	</beans:bean>
+	
+	<!-- 登录判断用户filter -->
+	<beans:bean id="myLoginFilter" class="com.example.demo.base.security.MyUsernamePasswordAuthenticationFilter">
+		<beans:property name="useCaptcha" value="false" />
+		<beans:property name="filterProcessesUrl" value="/j_spring_security_check" /><!-- 登录URL -->
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="rememberMeServices" ref="rememberMeServices"/>
+		<!-- 验证通过后配置访问 -->
+		<beans:property name="authenticationSuccessHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+				<beans:property name="alwaysUseDefaultTargetUrl" value="false" />
+				<beans:property name="defaultTargetUrl" value="/login/index" /> 
+			</beans:bean>
+			
+		</beans:property>
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl" value="/login/page4login" />
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+	
+	<!-- rememberMe -->
+	<beans:bean id="rememberMeServices" class="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices">
+	  	<beans:constructor-arg name="userDetailsService" ref="userDetailsService"/>
+	  	<beans:constructor-arg name="key" value="springRocks" />
+	</beans:bean>
+	
+	<beans:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+	  	<beans:constructor-arg name="key" value="springRocks"/>
+	</beans:bean>
+	
+	<beans:bean id="rememberMeFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+	  	<beans:constructor-arg name="rememberMeServices" ref="rememberMeServices"/>
+	  	<beans:constructor-arg name="authenticationManager" ref="authenticationManager" />
+	</beans:bean>
+	
+</beans:beans>  

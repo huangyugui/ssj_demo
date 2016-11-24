@@ -23,6 +23,7 @@
 		<com.alibaba.fastjson-version>1.2.20</com.alibaba.fastjson-version>
 		<joda.time-version>2.9.5</joda.time-version>
 		<commons-beanutils-core-version>1.8.3</commons-beanutils-core-version>
+		<org.springframework.security-version>4.0.2.RELEASE</org.springframework.security-version>
 	</properties>
 
 	<dependencies>
@@ -124,8 +125,23 @@
 			<version>${junit-version}</version>
 			<scope>test</scope>
 		</dependency>
-	
 		
+		<!-- spring-security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${org.springframework.security-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${org.springframework.security-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${org.springframework.security-version}</version>
+		</dependency>
 		
 		<!-- Others -->
 		<!-- Quartz -->

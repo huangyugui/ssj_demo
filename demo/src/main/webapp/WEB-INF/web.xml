@@ -35,7 +35,7 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-	<!-- spring-secuirity
+	<!-- spring-secuirity -->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -45,7 +45,7 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	 -->
+	
 	 
 	<!-- openSessionInView -->
 	<filter>
@@ -89,7 +89,11 @@
 
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
-		<url-pattern>/*</url-pattern>
+		<!-- 
+			<url-pattern>/</url-pattern> 会匹配到/login这样的路径型url，不会匹配到模式为*.jsp这样的后缀型url 
+			<url-pattern>/*</url-pattern> 会匹配所有url：路径型的和后缀型的url(包括/login,.jsp,.js和*.html等)
+		 -->
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -117,6 +121,6 @@
 	</servlet-mapping>
 	
 	<welcome-file-list>
-		<welcome-file>jsp/login.jsp</welcome-file>
+		<welcome-file>/login/page4login</welcome-file>
 	</welcome-file-list>
 </web-app>

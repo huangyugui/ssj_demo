@@ -24,7 +24,7 @@ public class UserController {
 		return "{success: true}";
 	}
 	
-	@RequestMapping("save/{flag}")
+	@RequestMapping("/save/{flag}")
 	@ResponseBody
 	public Map<String, Object> saveUser(@PathVariable Boolean flag){
 		userService.save(flag);
